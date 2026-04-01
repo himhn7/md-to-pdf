@@ -1,6 +1,7 @@
 import sys
 import webbrowser
 from pathlib import Path
+from tkinter import Tk, filedialog
 from markdown_it import MarkdownIt
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name, guess_lexer
@@ -26,16 +27,36 @@ def highlight_code(code, lang, _attrs):
     return f'<pre><code class="highlight">{highlight(code, lexer, formatter)}</code></pre>'
 
 
+def pick_files():
+    """Open a file picker dialog and return selected markdown paths."""
+    root = Tk()
+    root.withdraw()
+    paths = filedialog.askopenfilenames(
+        title="Select Markdown Files",
+        filetypes=[("Markdown files", "*.md *.markdown *.txt"), ("All files", "*.*")],
+    )
+    root.destroy()
+    return [Path(p) for p in paths]
+
+
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python app.py <file.md>")
-        sys.exit(1)
+    if len(sys.argv) >= 2:
+        md_paths = [Path(p) for p in sys.argv[1:]]
+    else:
+        md_paths = pick_files()
+        if not md_paths:
+            print("No files selected.")
+            sys.exit(0)
 
-    md_path = Path(sys.argv[1])
-    if not md_path.exists():
-        print(f"Markdown file not found: {md_path}")
-        sys.exit(1)
+    for md_path in md_paths:
+        if not md_path.exists():
+            print(f"Markdown file not found: {md_path}")
+            continue
+        convert(md_path)
 
+
+def convert(md_path):
+    """Convert a single markdown file to styled HTML and open it."""
     OUTPUT_DIR.mkdir(exist_ok=True)
     html_path = OUTPUT_DIR / md_path.with_suffix(".html").name
 
