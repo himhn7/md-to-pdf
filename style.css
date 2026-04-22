@@ -1,3 +1,8 @@
+/* Force background colors/gradients to render in printed PDFs */
+*, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
 /* Base Typography */
 body {
     font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -40,15 +45,6 @@ h2 {
 h3 {
     font-size: 1.35em;
     color: #0066cc;
-    position: relative;
-    padding-left: 20px;
-}
-h3:before {
-    content: "\25B8";
-    position: absolute;
-    left: 0;
-    color: #0066cc;
-    font-weight: bold;
 }
 h4 {
     font-size: 0.95em;
@@ -178,6 +174,40 @@ em {
     color: #2a2a2a;
     font-style: italic;
 }
+/* Collapsible sections (<details>/<summary>) */
+details {
+    margin: 1em 0;
+}
+summary {
+    cursor: pointer;
+    list-style: none;
+    display: block;
+}
+summary::-webkit-details-marker {
+    display: none;
+}
+summary::marker {
+    content: "";
+}
+/* Keep the heading inside <summary> flush with body text, no indent */
+summary > h1,
+summary > h2,
+summary > h3,
+summary > h4,
+summary > h5,
+summary > h6 {
+    display: inline;
+    margin: 0;
+}
+details > *:not(summary) {
+    margin-left: 0;
+}
+@media print {
+    details > summary {
+        page-break-after: avoid;
+    }
+}
+
 /* Tables */
 table {
     border-collapse: separate;
@@ -188,8 +218,11 @@ table {
     border-radius: 6px;
     overflow: hidden;
     font-size: 0.92em;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 th {
+    background: #0066cc;
     background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
     color: white;
     padding: 11px 14px;
@@ -198,18 +231,24 @@ th {
     letter-spacing: 0.03em;
     font-size: 0.9em;
     text-transform: uppercase;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 td {
     border-bottom: 1px solid #e8e8e8;
     border-right: 1px solid #f0f0f0;
     padding: 10px 14px;
     background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 td:last-child {
     border-right: none;
 }
 tr:nth-child(even) td {
     background: #f8f9fa;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 tr:hover td {
     background: #f0f7ff;
@@ -269,8 +308,14 @@ img {
         page-break-inside: avoid;
     }
 
-    pre, blockquote, table {
+    blockquote, table {
         page-break-inside: avoid;
+    }
+
+    /* Allow long code blocks to break across pages to avoid large whitespace gaps */
+    pre {
+        page-break-inside: auto;
+        break-inside: auto;
     }
 
     img {
