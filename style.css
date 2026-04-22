@@ -308,8 +308,24 @@ img {
         page-break-inside: avoid;
     }
 
-    blockquote, table {
+    blockquote {
         page-break-inside: avoid;
+    }
+
+    /* Allow long tables to break across pages instead of being pushed whole
+       to the next page (which leaves the first page blank). */
+    table {
+        page-break-inside: auto;
+        break-inside: auto;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
     }
 
     /* Allow long code blocks to break across pages to avoid large whitespace gaps */
